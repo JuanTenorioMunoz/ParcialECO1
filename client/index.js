@@ -1,6 +1,7 @@
 let socket = io("http://localhost:5050", { path: "/real-time" });
 
 const button = document.getElementById("login-button");
+const buttonStart = document.getElementById("start-game")
 const input = document.getElementById("input");
 
 console.log("FUNNNNY")
@@ -17,28 +18,42 @@ const saveUserName = async () => {
   }
 };
 
-const assignRole = async () => {
-}
-
 const buttonClick = async () => {
   console.log("click");
   await saveUserName(); 
-  await assignRole();
+};
+
+const buttonStartClick = async () => {
+  const userName = localStorage.getItem('username');
+  if (userName) {
+    socket.emit("startGame", userName); 
+  } 
 };
 
 socket.on("userJoined", (data) => {
   console.log(data);
 });
 
-socket.on("displayRole", (RoleName) => {
+socket.on("startGame", (userName, role) => {
+  const yesGameDiv = document.getElementsByClassName("yesGame")[0];
+  const noGameDiv = document.getElementsByClassName("noGame")[0];
 
-  const vehContainer = document.getElementById("Role-container");
+  if (yesGameDiv && noGameDiv) {
+    yesGameDiv.style.display = "block";
+    noGameDiv.style.display = "none";
+  }
+
+  let vehContainer = document.getElementsByClassName("Role-container")[0];
   if (!vehContainer) {
-    const vehContainer = document.createElement("div");
-    vehContainer.id = "Role-container";
+    vehContainer = document.createElement("div");
+    vehContainer.className = "Role-container";
+    vehContainer.id = role;
     document.body.appendChild(vehContainer);
   }
-  document.getElementById("Role-container").innerHTML += `<p>${RoleName}</p>`;
+  
+  vehContainer.innerHTML += `<p>${userName}</p>`;
+  vehContainer.innerHTML += `<p>${role}</p>`;
 });
+
 
 button.addEventListener("click", buttonClick);
