@@ -26,8 +26,10 @@ const buttonClick = async () => {
 const buttonStartClick = async () => {
   const userName = localStorage.getItem('username');
   if (userName) {
-    socket.emit("startGame", userName); 
-  } 
+    socket.emit("startGame", userName);
+  } else {
+    console.log("User not logged in.");
+  }
 };
 
 socket.on("userJoined", (data) => {
@@ -57,3 +59,4 @@ socket.on("startGame", (userName, role) => {
 
 
 button.addEventListener("click", buttonClick);
+buttonStart.addEventListener("click", buttonStartClick)
